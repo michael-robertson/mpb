@@ -8,7 +8,7 @@ Usage: $0 <verb> [tag]
   s[tore] <tag>  - put contents of buffer in storage
   g[imme] <tag>  - retrieve named storage into buffer
   l[ist]         - show tags
-  d[elete] [tag] - you get the idea
+  d[elete] <tag> - you get the idea
 First letter of verb is enough
 ```
 
