@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Enhanced pbcopy/pbpaste, optional buffer tag as single argument
+
+# TODO:
+# - case switch and functions
+
+BUFDIR="$HOME/.mpb/buffers"
+if [ ! -d $BUFDIR ]
+then
+  mkdir -p $BUFDIR
+  chmod 0700 $BUFDIR
+fi
+
+# COPY
+if echo "$1" | grep -qiE '^c'
+then
+  pbcopy
+  [ "$2" ] && pbpaste > "$BUFDIR/$2"
+
+# PASTE
+elif echo "$1" | grep -qiE '^p'
+then
+  if [ -f "$BUFDIR/$2" ]
+  then
+    pbcopy < "$BUFDIR/$2"
+    pbpaste
+  else
+    echo "($2 is not known)" 1>&2
+    exit 1
+  fi
+
+# STORE
+elif echo "$1" | grep -qiE '^s'
+then
+  [ "$2" ] && pbpaste > "$BUFDIR/$2"
+
+# GET
+elif echo "$1" | grep -qiE '^g'
+then
+  if [ -f "$BUFDIR/$2" ]
+  then
+    pbcopy < "$BUFDIR/$2"
+  else
+    echo "($2 is not known)" 1>&2
+    exit 1
+  fi
+
+# LIST
+elif echo "$1" | grep -qiE '^l'
+then
+  cd "$BUFDIR"
+  ls -l
+
+# DELETE
+elif echo "$1" | grep -qiE '^d'
+then
+  if [ -f "$BUFDIR/$2" ]
+  then
+    rm -f "$BUFDIR/$2"
+  else
+    echo "($2 is not known)" 1>&2
+    exit 1
+  fi
+
+# NO ARGUMENTS => USAGE
+else
+  echo "\
+Usage: $0 <verb> [tag]
+  c[opy] [tag]  - pbcopy with optional storage
+  p[aste] [tag] - pbpaste with optional storage
+  s[tore] <tag> - put contents of buffer in storage
+  g[imme] <tag> - retrieve named storage into buffer
+  l[ist]         - show tags
+  d[elete] [tag] - you get the idea
+First letter of verb is enough"
+fi
+
