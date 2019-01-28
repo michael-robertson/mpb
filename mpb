@@ -1,73 +1,72 @@
 #!/usr/bin/env bash
 # Enhanced pbcopy/pbpaste, optional buffer tag as single argument
 
-# TODO:
-# - case switch and functions
-# - orderly argument parsing
-# - filter $2 for shell-safe characters
+[ "$MPBDIR" ] || MPBDIR="$HOME/.mpb"
 
-BUFDIR="$HOME/.mpb/buffers"
-if [ ! -d $BUFDIR ]
-then
-  mkdir -p $BUFDIR
-  chmod 0700 $BUFDIR
-fi
+# Sanitize tag for shell, allow dashes if not in front
+MPBTAG=$(echo "$2" | sed -e 's/^-*//' -e 's/[^a-zA-Z0-9\._-]//g')
 
-# COPY
-if echo "$1" | grep -qiE '^c'
-then
-  pbcopy
-  [ "$2" ] && pbpaste > "$BUFDIR/$2"
-
-# PASTE
-elif echo "$1" | grep -qiE '^p'
-then
-  [ "$2" ] && pbcopy < "$BUFDIR/$2"
-  pbpaste
-
-# STORE
-elif echo "$1" | grep -qiE '^s'
-then
-  [ "$2" ] && pbpaste > "$BUFDIR/$2"
-
-# GET
-elif echo "$1" | grep -qiE '^g'
-then
-  if [ -f "$BUFDIR/$2" ]
-  then
-    pbcopy < "$BUFDIR/$2"
-  else
-    echo "($2 is not known)" 1>&2
-    exit 1
-  fi
-
-# LIST
-elif echo "$1" | grep -qiE '^l'
-then
-  cd "$BUFDIR"
-  ls -l
-
-# DELETE
-elif echo "$1" | grep -qiE '^d'
-then
-  if [ -f "$BUFDIR/$2" ]
-  then
-    rm -f "$BUFDIR/$2"
-  else
-    echo "($2 is not known)" 1>&2
-    exit 1
-  fi
-
-# NO ARGUMENTS => USAGE
-else
-  echo "\
-Usage: $0 <verb> [tag]
+function usage() {
+  [ "$*" ] && echo "Oops: $*" 1>&2
+  echo "Usage: $0 <verb> [tag]
   c[opy] [tag]   - pbcopy with optional storage
   p[aste] [tag]  - pbpaste with optional storage
   s[tore] <tag>  - put contents of buffer in storage
   g[imme] <tag>  - retrieve named storage into buffer
   l[ist]         - show tags
-  d[elete] <tag> - you get the idea
-First letter of verb is enough"
+  d[elete] <tag> - you get the idea" 1>&2
+  exit 1
+}
+
+# Create dir to save stuff
+if [ ! -d $MPBDIR ]
+then
+  mkdir -p $MPBDIR
+  chmod 0700 $MPBDIR
 fi
+cd "$MPBDIR"
+
+# Let's do this
+case "$1" in
+
+  c*) # COPY
+    pbcopy
+    [ "$MPBTAG" ] && pbpaste > "$MPBTAG"
+  ;;
+
+  p*) # PASTE
+    if [ "$MPBTAG" ]
+    then
+      [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
+      pbcopy < "$MPBTAG"
+    fi
+    pbpaste
+  ;;
+
+  s*) # STORE
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    pbpaste > "$MPBTAG"
+  ;;
+
+  g*) # GIMME
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
+    pbcopy < "$MPBTAG"
+  ;;
+
+  l*) # LIST
+    ls -l
+  ;;
+
+  d*) # DELETE
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
+    rm -f "$MPBTAG"
+  ;;
+
+  *)
+    usage
+  ;;
+
+esac
 
