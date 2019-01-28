@@ -3,6 +3,8 @@
 
 # TODO:
 # - case switch and functions
+# - orderly argument parsing
+# - filter $2 for shell-safe characters
 
 BUFDIR="$HOME/.mpb/buffers"
 if [ ! -d $BUFDIR ]
@@ -20,14 +22,8 @@ then
 # PASTE
 elif echo "$1" | grep -qiE '^p'
 then
-  if [ -f "$BUFDIR/$2" ]
-  then
-    pbcopy < "$BUFDIR/$2"
-    pbpaste
-  else
-    echo "($2 is not known)" 1>&2
-    exit 1
-  fi
+  [ "$2" ] && pbcopy < "$BUFDIR/$2"
+  pbpaste
 
 # STORE
 elif echo "$1" | grep -qiE '^s'
