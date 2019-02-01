@@ -14,6 +14,7 @@ function usage() {
   s[tore] <tag>  - put contents of buffer in storage
   g[imme] <tag>  - retrieve named storage into buffer
   l[ist]         - show tags
+  e[dit] <tag>   - edit the tag
   d[elete] <tag> - you get the idea" 1>&2
   exit 1
 }
@@ -56,6 +57,15 @@ case "$1" in
 
   l*) # LIST
     ls -l
+  ;;
+
+  e*) # EDIT
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    [ "$EDITOR" ] || EDITOR=/usr/bin/vim
+    if [ -f "$EDITOR" ]
+    then $EDITOR "$MPBTAG"
+    else echo "Unknown editor [$EDITOR]"
+    fi
   ;;
 
   d*) # DELETE

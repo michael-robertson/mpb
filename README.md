@@ -8,6 +8,7 @@ Usage: $0 <verb> [tag]
   s[tore] <tag>  - put contents of pasteboard in storage
   g[imme] <tag>  - retrieve named storage into pasteboard
   l[ist]         - show tags
+  e[dit] <tag>   - edit the tag
   d[elete] <tag> - you get the idea
 ```
 First letter of verb is enough.
