@@ -62,10 +62,9 @@ case "$1" in
   e*) # EDIT
     [ "$MPBTAG" ] || usage "missing tag argument"
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
-    if [ -f "$EDITOR" ]
-    then $EDITOR "$MPBTAG"
-    else echo "Unknown editor [$EDITOR]"
-    fi
+    [ -f "$EDITOR" ] || usage "Unknown editor [$EDITOR]"
+    $EDITOR "$MPBTAG"
+    pbcopy < "$MPBTAG"
   ;;
 
   d*) # DELETE
