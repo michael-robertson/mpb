@@ -14,7 +14,7 @@ function usage() {
   s[tore] <tag>  - put contents of buffer in storage
   g[imme] <tag>  - retrieve named storage into buffer
   l[ist]         - show tags
-  e[dit] <tag>   - edit the tag
+  e[dit] [tag]   - edit the tag, or just populate an unnamed buffer
   d[elete] <tag> - you get the idea" 1>&2
   exit 1
 }
@@ -60,11 +60,12 @@ case "$1" in
   ;;
 
   e*) # EDIT
-    [ "$MPBTAG" ] || usage "missing tag argument"
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
-    [ -f "$EDITOR" ] || usage "Unknown editor [$EDITOR]"
+    [ -x "$EDITOR" ] || usage "Unknown editor [$EDITOR], set EDITOR environment variable"
+    # if tag not specified, just create an empty tmp buffer
+    [ ! "$MPBTAG" ] && MPBTAG=".tmp" && rm -f "$MPBTAG"
     $EDITOR "$MPBTAG"
-    pbcopy < "$MPBTAG"
+    [ -f "$MPBTAG" ] && pbcopy < "$MPBTAG"
   ;;
 
   d*) # DELETE
