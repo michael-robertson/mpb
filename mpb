@@ -4,7 +4,7 @@
 [ "$MPBDIR" ] || MPBDIR="$HOME/.mpb"
 
 # Sanitize tag for shell, allow dashes if not in front
-MPBTAG=$(echo "$2" | sed -e 's/^-*//' -e 's/[^a-zA-Z0-9\._-]//g')
+MPBTAG=$(echo "${2//[^a-zA-Z0-9_.-]/}" | sed 's/^-*//')
 
 function usage() {
   [ "$*" ] && echo "Oops: $*" 1>&2
