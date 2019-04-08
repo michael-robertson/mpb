@@ -1,0 +1,24 @@
+
+# cp mpb.bash_completion /usr/local/etc/bash_completion.d/mpb
+
+have mpb &&
+_mpb()
+{
+    local cur prev
+
+    COMPREPLY=()
+    _get_comp_words_by_ref cur prev
+
+    case $prev in
+        c*|p*|s*|g*|e*|d*)
+            cd ${MPBDIR:-$HOME/.mpb}
+            _filedir
+            return 0
+            ;;
+    esac
+
+    COMPREPLY=( $( compgen -W 'copy paste store gimmme list edit delete' -- "$cur" ) )
+
+} &&
+complete -F _mpb mpb
+
