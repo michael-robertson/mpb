@@ -17,7 +17,7 @@ _mpb()
             ;;
     esac
 
-    COMPREPLY=( $( compgen -W 'copy paste store gimmme list edit delete' -- "$cur" ) )
+    COMPREPLY=( $( compgen -W 'copy paste store gimme list edit delete' -- "$cur" ) )
 
 } &&
 complete -F _mpb mpb
