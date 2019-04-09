@@ -1,5 +1,6 @@
 
 # cp mpb.bash_completion /usr/local/etc/bash_completion.d/mpb
+# Maybe instead of pushd/popd just populate COMPREPLY with directory contents directly?
 
 have mpb &&
 _mpb()
@@ -11,8 +12,9 @@ _mpb()
 
     case $prev in
         c*|p*|s*|g*|e*|d*)
-            cd ${MPBDIR:-$HOME/.mpb}
+            pushd ${MPBDIR:-$HOME/.mpb} > /dev/null
             _filedir
+            popd > /dev/null
             return 0
             ;;
     esac
