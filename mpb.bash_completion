@@ -1,26 +1,20 @@
 
 # cp mpb.bash_completion /usr/local/etc/bash_completion.d/mpb
-# Maybe instead of pushd/popd just populate COMPREPLY with directory contents directly?
+# This will work as long as no new verbs begin with "m"
 
 have mpb &&
 _mpb()
 {
-    local cur prev
-
-    COMPREPLY=()
+    local cur prev possibles
     _get_comp_words_by_ref cur prev
-
+    possibles='copy paste store gimme list edit delete'
     case $prev in
-        c*|p*|s*|g*|e*|d*)
-            pushd ${MPBDIR:-$HOME/.mpb} > /dev/null
-            _filedir
-            popd > /dev/null
-            return 0
+        c*|p*|s*|g*|l*|e*|d*)
+            possibles=$(cd ${MPBDIR:-$HOME/.mpb}; ls)
+            break
             ;;
     esac
-
-    COMPREPLY=( $( compgen -W 'copy paste store gimme list edit delete' -- "$cur" ) )
-
+    COMPREPLY=( $( compgen -W "$possibles" -- "$cur" ) )
 } &&
 complete -F _mpb mpb
 
