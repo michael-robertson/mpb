@@ -11,7 +11,6 @@ _mpb()
     case $prev in
         c*|p*|s*|g*|l*|e*|d*)
             possibles=$(cd ${MPBDIR:-$HOME/.mpb}; ls)
-            break
             ;;
     esac
     COMPREPLY=( $( compgen -W "$possibles" -- "$cur" ) )
