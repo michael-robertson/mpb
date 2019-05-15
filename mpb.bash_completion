@@ -1,19 +1,20 @@
 
 # cp mpb.bash_completion /usr/local/etc/bash_completion.d/mpb
-# This will work as long as no new verbs begin with "m"
 
 have mpb &&
 _mpb()
 {
-    local cur prev possibles
-    _get_comp_words_by_ref cur prev
-    possibles='copy paste store gimme list edit delete'
-    case $prev in
-        c*|p*|s*|g*|l*|e*|d*)
-            possibles=$(cd ${MPBDIR:-$HOME/.mpb}; ls)
-            ;;
-    esac
-    COMPREPLY=( $( compgen -W "$possibles" -- "$cur" ) )
+  local cur prev possibles
+  _get_comp_words_by_ref cur prev
+  possibles=
+  case $COMP_CWORD in
+    1) possibles='copy paste store gimme list edit delete' ;;
+    2) possibles=$(cd ${MPBDIR:-$HOME/.mpb}; ls) ;;
+  esac
+  if [ "$possibles" ]
+  then COMPREPLY=( $( compgen -W "$possibles" -- "$cur" ) )
+  else _filedir
+  fi
 } &&
 complete -F _mpb mpb
 
