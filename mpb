@@ -32,16 +32,21 @@ case "$1" in
 
   c*) # COPY
     pbcopy
-    [ "$MPBTAG" ] && pbpaste > "$MPBTAG"
+    if [ "$MPBTAG" ]
+    then
+      [ -f "$MPBTAG" ] cp -pv "$MPBTAG" /tmp # safety
+      pbpaste > "$MPBTAG"
+    fi
   ;;
 
   p*) # PASTE
     if [ "$MPBTAG" ]
     then
       [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
-      pbcopy < "$MPBTAG"
+      cat "$MPBTAG"
+    else
+      pbpaste
     fi
-    pbpaste
   ;;
 
   s*) # STORE
@@ -62,10 +67,13 @@ case "$1" in
   e*) # EDIT
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
     [ -x "$EDITOR" ] || usage "Unknown editor [$EDITOR], set EDITOR environment variable"
-    # if tag not specified, just create an empty tmp buffer
-    [ ! "$MPBTAG" ] && MPBTAG=".tmp" && rm -f "$MPBTAG"
-    $EDITOR "$MPBTAG"
-    [ -f "$MPBTAG" ] && pbcopy < "$MPBTAG"
+    if [ "$MPBTAG" ]; then # if tag is specified, edit it
+      $EDITOR "$MPBTAG"
+    else # otherwise just load the buffer
+      $EDITOR
+    fi
+    # Originally I had a pbcopy in here, but that always surprised me
+    # when I just wanted to select a part of it. Tricky.
   ;;
 
   d*) # DELETE
