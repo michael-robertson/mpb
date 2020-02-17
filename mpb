@@ -67,13 +67,11 @@ case "$1" in
   e*) # EDIT
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
     [ -x "$EDITOR" ] || usage "Unknown editor [$EDITOR], set EDITOR environment variable"
-    if [ "$MPBTAG" ]; then # if tag is specified, edit it
-      $EDITOR "$MPBTAG"
-    else # otherwise just load the buffer
-      $EDITOR
-    fi
-    # Originally I had a pbcopy in here, but that always surprised me
-    # when I just wanted to select a part of it. Tricky.
+    [ ! "$MPBTAG" ] && MPBTAG=.tmp && rm -f .tmp # no buffer specified, start empty file
+    pbcopy < /dev/null # clear current buffer
+    $EDITOR "$MPBTAG"
+    # only load file content if I did not explicitly copy something, no surprises
+    [ "$(pbpaste)" ] || pbcopy < "$MPBTAG"
   ;;
 
   d*) # DELETE
