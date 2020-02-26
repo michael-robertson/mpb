@@ -67,8 +67,8 @@ case "$1" in
   e*) # EDIT
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
     [ -x "$EDITOR" ] || usage "Unknown editor [$EDITOR], set EDITOR environment variable"
-    [ ! "$MPBTAG" ] && MPBTAG=.tmp && rm -f .tmp # no buffer specified, start empty file
-    pbcopy < /dev/null # clear current buffer
+    [ ! "$MPBTAG" ] && MPBTAG=.tmp && pbpaste > .tmp # no buffer specified, use current pb
+    pbcopy < /dev/null # clear current pb
     $EDITOR "$MPBTAG"
     # only load file content if I did not explicitly copy something, no surprises
     [ "$(pbpaste)" ] || pbcopy < "$MPBTAG"
