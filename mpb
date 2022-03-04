@@ -13,6 +13,8 @@ function usage() {
   p[aste] [tag]  - pbpaste with optional storage
   s[tore] <tag>  - put contents of buffer in storage
   g[imme] <tag>  - retrieve named storage into buffer
+  h[ead] <tag>   - show first 10 lines
+  t[ail] <tag>   - show last 10 lines
   l[ist]         - show tags
   e[dit] [tag]   - edit the tag, or just populate an unnamed buffer
   d[elete] <tag> - you get the idea" 1>&2
@@ -51,6 +53,7 @@ case "$1" in
 
   s*) # STORE
     [ "$MPBTAG" ] || usage "missing tag argument"
+    [ -f "$MPBTAG" ] && usage "tag $MPBTAG already exists"
     pbpaste > "$MPBTAG"
   ;;
 
@@ -58,6 +61,18 @@ case "$1" in
     [ "$MPBTAG" ] || usage "missing tag argument"
     [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
     pbcopy < "$MPBTAG"
+  ;;
+
+  h*) # HEAD
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
+    head "$MPBTAG"
+  ;;
+
+  t*) # TAIL
+    [ "$MPBTAG" ] || usage "missing tag argument"
+    [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
+    tail "$MPBTAG"
   ;;
 
   l*) # LIST
@@ -68,16 +83,19 @@ case "$1" in
     [ "$EDITOR" ] || EDITOR=/usr/bin/vim
     [ -x "$EDITOR" ] || usage "Unknown editor [$EDITOR], set EDITOR environment variable"
     [ ! "$MPBTAG" ] && MPBTAG=.tmp && pbpaste > .tmp # no buffer specified, use current pb
-    pbcopy < /dev/null # clear current pb
+    #pbcopy < /dev/null # clear current pb
     $EDITOR "$MPBTAG"
     # only load file content if I did not explicitly copy something, no surprises
-    [ "$(pbpaste)" ] || pbcopy < "$MPBTAG"
+    #[ "$(pbpaste)" ] || pbcopy < "$MPBTAG"
+    # Actually, every trick here causes weird side effects, so don't mess 
+    # with the pb at all. If I want the whole thing, I'll use gimme.
   ;;
 
   d*) # DELETE
     [ "$MPBTAG" ] || usage "missing tag argument"
     [ -f "$MPBTAG" ] || usage "tag $MPBTAG not found"
-    rm -f "$MPBTAG"
+    #rm -f "$MPBTAG"
+    mv -vf "$MPBTAG" "/tmp/$MPBTAG"
   ;;
 
   *)
