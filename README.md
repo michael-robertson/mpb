@@ -7,6 +7,8 @@ Usage: $0 <verb> [tag]
   p[aste] [tag]  - pbpaste with optional storage
   s[tore] <tag>  - put contents of pasteboard in storage
   g[imme] <tag>  - retrieve named storage into pasteboard
+  h[ead] <tag>   - show first 10 lines
+  t[ail] <tag>   - show last 10 lines
   l[ist]         - show tags
   e[dit] [tag]   - edit a tag, or just use a temporary buffer
   d[elete] <tag> - you get the idea
