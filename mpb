@@ -36,7 +36,7 @@ case "$1" in
     pbcopy
     if [ "$MPBTAG" ]
     then
-      [ -f "$MPBTAG" ] cp -pv "$MPBTAG" /tmp # safety
+      [ -f "$MPBTAG" ] && cp -pv "$MPBTAG" /tmp # safety
       pbpaste > "$MPBTAG"
     fi
   ;;
