@@ -16,6 +16,7 @@ function usage() {
   h[ead] <tag>   - show first 10 lines
   t[ail] <tag>   - show last 10 lines
   l[ist]         - show tags
+  f[ind]         - search for a string, not case sensitive
   e[dit] [tag]   - edit the tag, or just populate an unnamed buffer
   d[elete] <tag> - you get the idea" 1>&2
   exit 1
@@ -77,6 +78,10 @@ case "$1" in
 
   l*) # LIST
     ls -l
+  ;;
+
+  f*) # FIND
+    grep -i "$2" *
   ;;
 
   e*) # EDIT

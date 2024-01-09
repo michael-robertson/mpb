@@ -8,7 +8,7 @@ _mpb()
   _get_comp_words_by_ref cur prev
   possibles=
   case $COMP_CWORD in
-    1) possibles='copy paste store gimme head tail list edit delete' ;;
+    1) possibles='copy paste store gimme head tail list find edit delete' ;;
     2) possibles=$(cd ${MPBDIR:-$HOME/.mpb}; ls) ;;
   esac
   if [ "$possibles" ]
